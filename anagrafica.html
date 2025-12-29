@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Dati Anagrafici e Salute</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="flow.js"></script>
+    <style>
+        /* Stile specifico per le checkbox a lista, simile ai radio button */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        /* Riutilizziamo lo stile .option dal CSS principale ma adattiamo per checkbox */
+        .check-option {
+            display: flex;
+            align-items: center;
+            background: #444;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #555;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .check-option:hover { background-color: #555; border-color: white; }
+        
+        /* Checkbox più grandi */
+        input[type="checkbox"] {
+            transform: scale(1.8);
+            margin-right: 20px;
+            accent-color: #4CAF50;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Scheda Anagrafica e Salute</h1>
+    <p style="text-align:center; color:#ccc;">Compila i seguenti dati prima di iniziare l'esperimento.</p>
+
+    <form onsubmit="event.preventDefault(); salvaAnagrafica();">
+
+        <div class="section-title">Informazioni personali</div>
+        
+        <label>Nome e Cognome:</label>
+        <input type="text" id="nome" required placeholder="Es. Mario Rossi">
+
+        <label>Età:</label>
+        <input type="number" id="eta" required min="18" max="99">
+
+        <label>Occupazione:</label>
+        <select id="occupazione" required>
+            <option value="" disabled selected>-- Seleziona --</option>
+            <option value="studente">Studente</option>
+            <option value="lavoratore">Lavoratore</option>
+            <option value="studente-lavoratore">Studente-Lavoratore</option>
+            <option value="disoccupato">Disoccupato</option>
+            <option value="pensionato">Pensionato</option>
+        </select>
+
+        <div class="section-title">DSA (Disturbo Specifico dell'apprendimento)</div>
+        <label>Hai una diagnosi di DSA?</label>
+        <select id="dsa" required>
+            <option value="" disabled selected>-- Seleziona --</option>
+            <option value="nessuna">Non ho una diagnosi di DSA</option>
+            <option value="dislessia">Dislessia</option>
+            <option value="disortografia">Disortografia</option>
+            <option value="disgrafia">Disgrafia</option>
+            <option value="discalculia">Discalculia</option>
+        </select>
+
+        <div class="section-title">Alterazioni della vista</div>
+        <label>Hai mai ricevuto diagnosi di disturbi visivi? (Puoi selezionarne più di una)</label>
+        
+        <div class="checkbox-group" id="group_vista">
+            <label class="check-option"><input type="checkbox" name="disturbi_visivi" value="nessuno" onchange="checkVista(this)"> Non ho disturbi visivi</label>
+            <label class="check-option"><input type="checkbox" name="disturbi_visivi" value="miopia" onchange="checkVista(this)"> Miopia</label>
+            <label class="check-option"><input type="checkbox" name="disturbi_visivi" value="astigmatismo" onchange="checkVista(this)"> Astigmatismo</label>
+            <label class="check-option"><input type="checkbox" name="disturbi_visivi" value="ipermetropia" onchange="checkVista(this)"> Ipermetropia</label>
+            <label class="check-option"><input type="checkbox" name="disturbi_visivi" value="strabismo" onchange="checkVista(this)"> Strabismo</label>
+            <label class="check-option"><input type="checkbox" name="disturbi_visivi" value="ambliopia" onchange="checkVista(this)"> Ambliopia</label>
+        </div>
+
+        <div id="div_dettagli_vista" class="dynamic-block" style="padding-left: 15px; border-left: 2px solid #4CAF50; margin-top:10px;">
+            <label>In questo momento stai usando occhiali o lenti?</label>
+            <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="correzione" value="occhiali"> Sì, occhiali</label>
+                <label class="radio-option"><input type="radio" name="correzione" value="lenti"> Sì, lenti a contatto</label>
+                <label class="radio-option"><input type="radio" name="correzione" value="no"> No</label>
+            </div>
+            
+            <label>Caratteristiche particolari lenti/occhiali:</label>
+            <select id="caratteristiche_lenti" onchange="toggleAltroLenti(this)">
+                <option value="nessuna">Nessuna / Non porto lenti</option>
+                <option value="antiriflesso">Antiriflesso</option>
+                <option value="filtro_luce_blu">Filtro Luce Blu</option>
+                <option value="altro">Altro...</option>
+            </select>
+            <div id="div_altro_lenti" class="hidden-section">
+                <input type="text" id="altro_lenti_text" placeholder="Specifica caratteristiche...">
+            </div>
+        </div>
+                
+        <label>Ti capita di avere affaticamento visivo dopo uso prolungato di dispositivi elettronici?</label>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="affaticamento" value="si" required> Sì</label>
+            <label class="radio-option"><input type="radio" name="affaticamento" value="no"> No</label>
+            <label class="radio-option"><input type="radio" name="affaticamento" value="a_volte"> A volte</label>
+        </div>
+
+        <label>Soffri frequentemente di mal di testa correlato alla vista?</label>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="mdt" value="si" required> Sì</label>
+            <label class="radio-option"><input type="radio" name="mdt" value="no"> No</label>
+            <label class="radio-option"><input type="radio" name="mdt" value="a_volte"> A volte</label>
+        </div>
+
+        <label>Hai sensibilità alla luce intensa (fotofobia)?</label>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="fotofobia" value="si" required> Sì</label>
+            <label class="radio-option"><input type="radio" name="fotofobia" value="no"> No</label>
+            <label class="radio-option"><input type="radio" name="fotofobia" value="a_volte"> A volte</label>
+        </div>
+
+        <label>Sei daltonico?</label>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="daltonismo" value="si" onchange="toggleDaltonismo(true)" required> Sì</label>
+            <label class="radio-option"><input type="radio" name="daltonismo" value="no" onchange="toggleDaltonismo(false)"> No</label>
+        </div>
+
+        <div id="div_tipo_daltonismo" class="hidden-section">
+            <label>Specifica il tipo di daltonismo:</label>
+            <select id="tipo_daltonismo">
+                <option value="" disabled selected>-- Seleziona --</option>
+                <option value="protanopia">Protanopia</option>
+                <option value="protanomalia">Protanomalia</option>
+                <option value="deuteranopia">Deuteranopia</option>
+                <option value="deuteranomalia">Deuteranomalia</option>
+                <option value="tritanopia">Tritanopia</option>
+                <option value="tritanomalia">Tritanomalia</option>
+                <option value="acromatopsia">Acromatopsia</option>
+                <option value="altro">Altro</option>
+            </select>
+        </div>
+
+        <label>Vuoi aggiungere informazioni o segnalare altri problemi visivi?</label>
+        <textarea id="note_visive" placeholder="Scrivi qui eventuali note..."></textarea>
+
+        <div class="section-title">Condizione di Salute</div>
+        <label>Hai diagnosi patologiche certificate? (Puoi selezionarne più di una)</label>
+        
+        <div class="checkbox-group" id="group_patologie">
+            <label class="check-option"><input type="checkbox" name="patologie" value="nessuna" onchange="checkPatologia(this)"> Non ho nessuna patologia</label>
+            <label class="check-option"><input type="checkbox" name="patologie" value="salute_mentale" onchange="checkPatologia(this)"> Disturbi della salute mentale</label>
+            <label class="check-option"><input type="checkbox" name="patologie" value="neurologiche" onchange="checkPatologia(this)"> Malattie neurologiche</label>
+            <label class="check-option"><input type="checkbox" name="patologie" value="neurodegenerative" onchange="checkPatologia(this)"> Malattie neurodegenerative</label>
+            <label class="check-option"><input type="checkbox" name="patologie" value="metaboliche_ormonali" onchange="checkPatologia(this)"> Malattie metaboliche o ormonali</label>
+            <label class="check-option"><input type="checkbox" name="patologie" value="ipertensione" onchange="checkPatologia(this)"> Ipertensione</label>
+            <label class="check-option"><input type="checkbox" name="patologie" value="sintomatologie_croniche" onchange="checkPatologia(this)"> Sintomatologie croniche</label>
+            <label class="check-option"><input type="checkbox" name="patologie" value="diabete" onchange="checkPatologia(this)"> Diabete</label>
+        </div>
+
+        <div id="div_specifica_patologia" class="hidden-section">
+            <label>Puoi specificare il tipo di malattia diagnosticata?</label>
+            <input type="text" id="specifica_patologia_text" placeholder="Inserisci il nome della patologia...">
+        </div>
+
+        <button type="submit">SALVA E INIZIA ESPERIMENTO</button>
+    </form>
+
+    <script>
+        // --- LOGICA VISTA (CHECKBOX) ---
+        function checkVista(el) {
+            const checkboxes = document.querySelectorAll('input[name="disturbi_visivi"]');
+            const divDettagli = document.getElementById('div_dettagli_vista');
+            const radiosCorrezione = document.getElementsByName('correzione');
+
+            if (el.value === 'nessuno') {
+                if (el.checked) {
+                    // Se clicco Nessuno, deseleziono tutto il resto
+                    checkboxes.forEach(cb => { if(cb !== el) cb.checked = false; });
+                    divDettagli.style.display = 'none';
+                }
+            } else {
+                if (el.checked) {
+                    // Se clicco una malattia, deseleziono "Nessuno"
+                    document.querySelector('input[value="nessuno"]').checked = false;
+                }
+            }
+
+            // Controllo se c'è almeno una selezione diversa da "Nessuno"
+            const anySick = Array.from(checkboxes).some(cb => cb.checked && cb.value !== 'nessuno');
+            
+            if (anySick) {
+                divDettagli.style.display = 'block';
+                radiosCorrezione.forEach(r => r.required = true);
+            } else {
+                // Se non c'è nulla selezionato o solo "nessuno"
+                divDettagli.style.display = 'none';
+                radiosCorrezione.forEach(r => { r.required = false; r.checked = false; });
+                document.getElementById('caratteristiche_lenti').value = "nessuna";
+                toggleAltroLenti(document.getElementById('caratteristiche_lenti'));
+                
+                // Forza la selezione di "Nessuno" se l'utente ha deselezionato tutto
+                if (!document.querySelector('input[value="nessuno"]').checked && !anySick) {
+                   // Opzionale: potremmo ri-checkare "nessuno", ma lasciamo libertà
+                }
+            }
+        }
+
+        function toggleAltroLenti(selectEl) {
+            const div = document.getElementById('div_altro_lenti');
+            const input = document.getElementById('altro_lenti_text');
+            if (selectEl.value === 'altro') {
+                div.style.display = 'block';
+                input.required = true;
+            } else {
+                div.style.display = 'none';
+                input.required = false;
+                input.value = "";
+            }
+        }
+
+        // --- LOGICA PATOLOGIE (CHECKBOX) ---
+        function checkPatologia(el) {
+            const checkboxes = document.querySelectorAll('input[name="patologie"]');
+            const divSpecifica = document.getElementById('div_specifica_patologia');
+            const inputSpecifica = document.getElementById('specifica_patologia_text');
+
+            if (el.value === 'nessuna') {
+                if (el.checked) {
+                    checkboxes.forEach(cb => { if(cb !== el) cb.checked = false; });
+                }
+            } else {
+                if (el.checked) {
+                    document.querySelector('input[name="patologie"][value="nessuna"]').checked = false;
+                }
+            }
+
+            const anyPatologia = Array.from(checkboxes).some(cb => cb.checked && cb.value !== 'nessuna');
+
+            if (anyPatologia) {
+                divSpecifica.style.display = 'block';
+                inputSpecifica.required = true;
+            } else {
+                divSpecifica.style.display = 'none';
+                inputSpecifica.required = false;
+                inputSpecifica.value = "";
+            }
+        }
+
+        // --- ALTRE LOGICHE ---
+        function toggleDaltonismo(isYes) {
+            const div = document.getElementById('div_tipo_daltonismo');
+            const select = document.getElementById('tipo_daltonismo');
+            if (isYes) {
+                div.style.display = 'block';
+                select.required = true;
+            } else {
+                div.style.display = 'none';
+                select.required = false;
+                select.value = "";
+            }
+        }
+
+        // --- SALVATAGGIO ---
+        function salvaAnagrafica() {
+            // Raccogli DISTURBI VISIVI (Array)
+            const disturbiCheckboxes = document.querySelectorAll('input[name="disturbi_visivi"]:checked');
+            let disturbiList = Array.from(disturbiCheckboxes).map(cb => cb.value);
+            if (disturbiList.length === 0) disturbiList = ["nessuno"]; // Default se vuoto
+
+            // Logica Correzione
+            let correzione = null;
+            let caratteristicheLenti = null;
+
+            // Se la lista contiene qualcosa di diverso da "nessuno"
+            if (!disturbiList.includes('nessuno')) {
+                const corrEl = document.querySelector('input[name="correzione"]:checked');
+                if (corrEl) correzione = corrEl.value;
+
+                let lentiVal = document.getElementById('caratteristiche_lenti').value;
+                if (lentiVal === 'altro') {
+                    caratteristicheLenti = document.getElementById('altro_lenti_text').value;
+                } else {
+                    caratteristicheLenti = lentiVal;
+                }
+            }
+
+            // Daltonismo
+            const daltonismoVal = document.querySelector('input[name="daltonismo"]:checked').value;
+            let tipoDaltonismo = null;
+            if (daltonismoVal === 'si') {
+                tipoDaltonismo = document.getElementById('tipo_daltonismo').value;
+            }
+
+            // Raccogli PATOLOGIE (Array)
+            const patologieCheckboxes = document.querySelectorAll('input[name="patologie"]:checked');
+            let patologieList = Array.from(patologieCheckboxes).map(cb => cb.value);
+            if (patologieList.length === 0) patologieList = ["nessuna"];
+
+            let specificaPatologia = null;
+            if (!patologieList.includes('nessuna')) {
+                specificaPatologia = document.getElementById('specifica_patologia_text').value;
+            }
+
+            const dati = {
+                nome: document.getElementById('nome').value,
+                eta: document.getElementById('eta').value,
+                occupazione: document.getElementById('occupazione').value,
+                dsa: document.getElementById('dsa').value,
+                
+                // Ora sono ARRAY (liste)
+                disturbo_visivo: disturbiList, 
+                
+                correzione: correzione,              
+                caratteristiche_lenti: caratteristicheLenti, 
+                
+                daltonico: daltonismoVal,
+                tipo_daltonismo: tipoDaltonismo,
+                note_visive: document.getElementById('note_visive').value,
+
+                // Ora sono ARRAY (liste)
+                categoria_patologia: patologieList,
+                specifica_patologia: specificaPatologia,
+
+                affaticamento: document.querySelector('input[name="affaticamento"]:checked').value,
+                mal_di_testa: document.querySelector('input[name="mdt"]:checked').value,
+                fotofobia: document.querySelector('input[name="fotofobia"]:checked').value
+            };
+
+            localStorage.setItem('dati_anagrafici', JSON.stringify(dati));
+            
+            console.log("Anagrafica salvata:", dati);
+            
+            if (typeof nextStep === "function") {
+                nextStep();
+            } else {
+                alert("Errore: flow.js non caricato.");
+            }
+        }
+    </script>
+</body>
+</html>

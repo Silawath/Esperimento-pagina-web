@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>KSS</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="flow.js"></script>
+</head>
+<body>
+    <h1 id="dynamic-title">KSS</h1>
+    <h4 id="dynamic-subtitle"></h4>
+    
+    <p>Valuta il tuo livello di sonnolenza negli ultimi 10 minuti:</p>
+
+    <form onsubmit="event.preventDefault(); submitKSS();">
+        <label class="option"><input type="radio" name="kss" value="1" required> 1. Molto vigile</label>
+        <label class="option"><input type="radio" name="kss" value="2"> 2.</label>
+        <label class="option"><input type="radio" name="kss" value="3"> 3. Vigile</label>
+        <label class="option"><input type="radio" name="kss" value="4"> 4.</label>
+        <label class="option"><input type="radio" name="kss" value="5"> 5. Né vigile, né sonnolento</label>
+        <label class="option"><input type="radio" name="kss" value="6"> 6.</label>
+        <label class="option"><input type="radio" name="kss" value="7"> 7. Sonnolento, ma sveglio</label>
+        <label class="option"><input type="radio" name="kss" value="8"> 8.</label>
+        <label class="option"><input type="radio" name="kss" value="9"> 9. Molto sonnolento, sforzo per restare svegli</label>
+
+        <button type="submit">AVANTI</button>
+    </form>
+
+    <script>
+        function submitKSS() {
+            const val = document.querySelector('input[name="kss"]:checked').value;
+            const stepIndex = localStorage.getItem('stepIndex');
+            const key = `risultato_step_${stepIndex}_KSS`;
+            
+            const record = {
+                valore: val,
+                fase: getCurrentLightName(), 
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem(key, JSON.stringify(record));
+            nextStep();
+        }
+    </script>
+</body>
+</html>

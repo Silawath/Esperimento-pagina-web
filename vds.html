@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>VDS</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="flow.js"></script>
+</head>
+<body>
+    <h1>Visual Discomfort Scale</h1>
+    <p>Valuta l'intensità dei sintomi (1 = Per niente, 5 = Estremamente)</p>
+
+    <div style="width: 100%; max-width: 700px; margin: 0 auto 5px auto; padding: 0 20px; border: 1px solid transparent; display: flex; justify-content: space-between;">
+        <div style="flex: 1;"></div> 
+        
+        <div style="flex: 0 0 auto; display: flex; gap: 20px; color: #aaa;">
+            <span style="width:30px; text-align:center; font-weight:bold;">1</span>
+            <span style="width:30px; text-align:center; font-weight:bold;">2</span>
+            <span style="width:30px; text-align:center; font-weight:bold;">3</span>
+            <span style="width:30px; text-align:center; font-weight:bold;">4</span>
+            <span style="width:30px; text-align:center; font-weight:bold;">5</span>
+        </div>
+    </div>
+
+    <form onsubmit="event.preventDefault(); submitVDS();">
+        <div id="symptoms-container"></div>
+        <button type="submit">CONFERMA E PROSEGUI</button>
+    </form>
+
+    <script>
+        const symptoms = [
+            "Nausea", "Vertigini", "Malessere", "Sensazione di qualcosa nell'occhio",
+            "Giramento di testa", "Visione doppia", "Capogiro", "Visione poco chiara",
+            "Visione offuscata", "Visione scarsa", "Visione nebbiosa", "Difficoltà nel mettere a fuoco",
+            "Visione poco nitida", "Occhi irritati", "Necessità di strofinare gli occhi",
+            "Secchezza oculare", "Prurito agli occhi", "Bruciore agli occhi",
+            "Sbattere spesso gli occhi", "Dolore agli occhi", "Sabbia negli occhi",
+            "Pressione alla testa", "Dolore sordo alla testa", "Pesantezza alla testa",
+            "Congestione alla testa", "Pressione dietro agli occhi", "Mal di testa"
+        ];
+
+        const cont = document.getElementById('symptoms-container');
+        
+        // Generazione dinamica delle domande
+        symptoms.forEach((s, i) => {
+            cont.innerHTML += `
+            <div class="question-box" style="display:flex; align-items:center; justify-content:space-between;">
+                <div style="flex:1; font-weight:bold; margin-right:10px;">${s}</div>
+                
+                <div style="flex:0 0 auto; display:flex; gap: 20px;">
+                    ${[1,2,3,4,5].map(v => `
+                        <div style="text-align:center; width:30px;">
+                            <input type="radio" name="s${i}" value="${v}" style="margin:0; transform:scale(1.5); cursor:pointer;" required>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
+        });
+
+        // FUNZIONE DI SALVATAGGIO 
+        function submitVDS() {
+            let results = {};
+            
+            // Raccoglie tutte le risposte
+            symptoms.forEach((s, i) => {
+                const name = `s${i}`;
+                const checkedEl = document.querySelector(`input[name="${name}"]:checked`);
+                if(checkedEl) {
+                    results[s] = checkedEl.value; 
+                }
+            });
+            
+            // Prepara il salvataggio
+            const stepIndex = localStorage.getItem('stepIndex');
+            const key = `risultato_step_${stepIndex}_VDS`;
+            
+            const record = {
+                valori: results,
+                fase: getCurrentLightName(), // Funzione di flow.js
+                timestamp: new Date().toISOString()
+            };
+            
+            // Salva nel browser
+            localStorage.setItem(key, JSON.stringify(record));
+            
+            // Va avanti
+            nextStep();
+        }
+    </script>
+</body>
+</html>

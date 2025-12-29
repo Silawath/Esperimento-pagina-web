@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Benvenuto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Benvenuto</h1>
+    <p>Premi il pulsante per iniziare la sessione.</p>
+    <button onclick="begin()">INIZIA</button>
+
+    <script>
+        function begin() {
+            localStorage.setItem('stepIndex', 0);
+            window.location.href = "anagrafica.html"; // Correggi qui se il primo step è anagrafica
+        }
+    </script>
+</body>
+</html>

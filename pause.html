@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Pausa</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="flow.js"></script>
+</head>
+<body>
+    <h1>Pausa</h1>
+    <p>Rilassati. Il prossimo test inizierà tra:</p>
+    
+    <div id="timer">10:00</div>
+
+    <button id="btn-next" class="disabled-btn" onclick="nextStep()">VAI ALLA SECONDA FASE</button>
+    
+    <button onclick="nextStep()" class="secondary-btn">(Salta Pausa - Debug)</button>
+
+    <script>
+        let timeLeft = 10 * 60; 
+        const timerEl = document.getElementById('timer');
+        const btnEl = document.getElementById('btn-next');
+
+        const interval = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timerEl.textContent = `${minutes}:${seconds}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                timerEl.textContent = "00:00";
+                // Rimuovi classe disabilitata
+                btnEl.classList.remove('disabled-btn');
+                btnEl.textContent = "INIZIA PROSSIMA FASE";
+                alert("La pausa è terminata!");
+            }
+            timeLeft--;
+        }, 1000);
+    </script>
+</body>
+</html>

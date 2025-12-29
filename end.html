@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Fine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Esperimento Completato</h1>
+    <p>Tutti i dati sono stati raccolti nella memoria del dispositivo.</p>
+    <p>Per il ricercatore: Clicca il pulsante qui sotto per generare e salvare il file definitivo.</p>
+
+    <button onclick="scaricaDatiCompleti()">SCARICA DATI SESSIONE</button>
+    
+    <div id="msg" class="success-message">File salvato con successo!</div>
+
+    <br><br>
+    <a href="index.html">Nuova Sessione (Torna alla Home)</a>
+
+    <script>
+        function scaricaDatiCompleti() {
+            // 1. RECUPERO DATI DI CONTROLLO
+            const userId = localStorage.getItem('userId') || 'Sconosciuto';
+            const light1 = localStorage.getItem('light1_name') || 'ND';
+            const light2 = localStorage.getItem('light2_name') || 'ND';
+            const exp1 = localStorage.getItem('phase1_name') || 'ND'; 
+            const exp2 = localStorage.getItem('phase2_name') || 'ND'; 
+            
+            // 2. RECUPERO RISULTATI E ORDINAMENTO
+            const anagrafica = JSON.parse(localStorage.getItem('dati_anagrafici') || '{}');
+            
+            // A. Troviamo tutte le chiavi dei risultati
+            let keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.includes('risultato_step_')) {
+                    keys.push(key);
+                }
+            }
+
+            // B. Le ordiniamo numericamente in base allo step (1, 2, 3...)
+            // Questo garantisce l'ordine: Pre L1 -> Post L1 -> Pre L2 -> Post L2
+            keys.sort((a, b) => {
+                const stepA = parseInt(a.match(/step_(\d+)_/)[1]);
+                const stepB = parseInt(b.match(/step_(\d+)_/)[1]);
+                return stepA - stepB;
+            });
+
+            // C. Costruiamo l'oggetto ordinato
+            const risultatiQuestionari = {};
+            keys.forEach(key => {
+                risultatiQuestionari[key] = JSON.parse(localStorage.getItem(key));
+            });
+
+            // 3. CREAZIONE DEL PACCHETTO DATI
+            const sessioneCompleta = {
+                // BLOCCO 1: DATI DI CONTROLLO
+                CONTROL_DATA: {
+                    Soggetto_ID: userId,
+                    Data_Sessione: new Date().toLocaleString(),
+                    Sequenza_Luci: `${light1} -> ${light2}`,
+                    Sequenza_Esperimenti: `${exp1} -> ${exp2}`,
+                    Luce_1: light1,
+                    Luce_2: light2,
+                    Esperimento_1: exp1,
+                    Esperimento_2: exp2
+                },
+                
+                // BLOCCO 2: ANAGRAFICA
+                ANAGRAFICA: anagrafica,
+                
+                // BLOCCO 3: RISULTATI (Ora Ordinati)
+                RISULTATI_QUESTIONARI: risultatiQuestionari
+            };
+
+            // 4. GENERAZIONE FILE JSON
+            const dataStr = JSON.stringify(sessioneCompleta, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            const nomeFile = `DATI_${userId}_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = nomeFile;
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            document.getElementById('msg').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
