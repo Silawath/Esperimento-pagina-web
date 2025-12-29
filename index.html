@@ -28,24 +28,34 @@
 
     <script>
         function startExperiment() {
-            const uid = document.getElementById('userId').value;
-            const Lightorder = document.getElementById('lightOrder').value;
-            const ExperimentOrder = document.getElementById('ExperimentOrder').value;
-            
-            if(!uid) return alert("Inserisci ID Utente");
+            try {
+                const uid = document.getElementById('userId').value;
+                const Lightorder = document.getElementById('lightOrder').value;
+                const ExperimentOrder = document.getElementById('ExperimentOrder').value;
+                
+                if(!uid) return alert("⚠️ Inserisci ID Utente prima di procedere!");
 
-            const [l1, l2] = Lightorder.split('_');
-            const [e1, e2] = ExperimentOrder.split('_');
-            
-            localStorage.clear();
-            localStorage.setItem('userId', uid);
-            localStorage.setItem('light1_name', l1);
-            localStorage.setItem('light2_name', l2);
-            localStorage.setItem('phase1_name', e1);
-            localStorage.setItem('phase2_name', e2);
-            localStorage.setItem('stepIndex', -1); 
+                const [l1, l2] = Lightorder.split('_');
+                const [e1, e2] = ExperimentOrder.split('_');
+                
+                // Pulisce tutto prima di iniziare
+                localStorage.clear();
+                
+                // Salva i nuovi dati
+                localStorage.setItem('userId', uid);
+                localStorage.setItem('light1_name', l1);
+                localStorage.setItem('light2_name', l2);
+                localStorage.setItem('phase1_name', e1);
+                localStorage.setItem('phase2_name', e2);
+                localStorage.setItem('stepIndex', -1); 
 
-            window.location.href = "intro.html";
+                // FEEDBACK VISIVO (Cosi capiamo se funziona)
+                alert("✅ Configurazione Salvata per utente: " + uid + "\nPremi OK per iniziare.");
+
+                window.location.href = "intro.html";
+            } catch (err) {
+                alert("ERRORE NEL CODICE: " + err.message);
+            }
         }
     </script>
 </body>
