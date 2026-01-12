@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Intervista Finale</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="flow.js"></script>
+</head>
+<body>
+    <h1>Intervista Finale</h1>
+    <p style="text-align:center; color:#aaa">Domande conclusive sull'esperienza.</p>
+
+    <form onsubmit="event.preventDefault(); saveInterview();">
+        
+        <label>1. Come ti senti adesso che è terminato l'esperimento?</label>
+        <textarea id="q1" required></textarea>
+
+        <label>2. Ti senti affaticato/a? Se sì, da cosa?</label>
+        <textarea id="q2" required></textarea>
+
+        <label>3. Hai notato differenze tra le due fasi? Se sì, quali?</label>
+        <textarea id="q3" required></textarea>
+
+        <label>4. (Solo se pertinente) Perché dici che la luce era diversa?</label>
+        <textarea id="q4"></textarea>
+
+        <label>5. Hai avuto fastidi oculari? (Quando e di che tipo?)</label>
+        <textarea id="q5" required></textarea>
+
+        <label>6. Hai avuto altre difficoltà durante l'esperimento?</label>
+        <textarea id="q6" required></textarea>
+
+        <button type="submit">TERMINA ESPERIMENTO</button>
+    </form>
+
+    <script>
+        function saveInterview() {
+            const data = {
+                Q1_Feeling: document.getElementById('q1').value,
+                Q2_Fatigue: document.getElementById('q2').value,
+                Q3_Diffs: document.getElementById('q3').value,
+                Q4_Light: document.getElementById('q4').value,
+                Q5_Eyes: document.getElementById('q5').value,
+                Q6_Other: document.getElementById('q6').value
+            };
+
+            localStorage.setItem('INTERVISTA_FINALE', JSON.stringify(data));
+            nextStep();
+        }
+    </script>
+</body>
+</html>

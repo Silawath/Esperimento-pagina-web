@@ -4,18 +4,83 @@
     <meta charset="UTF-8">
     <title>Fine</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Stile specifico per la pagina finale */
+        .end-card {
+            background-color: transparent;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .big-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #555, transparent);
+            margin: 30px 0;
+            width: 100%;
+        }
+
+        .researcher-label {
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .restart-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #777;
+            font-size: 0.9rem;
+            border-bottom: 1px dotted #777;
+            padding-bottom: 3px;
+            transition: all 0.3s;
+        }
+        .restart-link:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Esperimento Completato</h1>
-    <p>Tutti i dati sono stati raccolti nella memoria del dispositivo.</p>
-    <p>Per il ricercatore: Clicca il pulsante qui sotto per generare e salvare il file definitivo.</p>
 
-    <button onclick="scaricaDatiCompleti()">SCARICA DATI SESSIONE</button>
-    
-    <div id="msg" class="success-message">File salvato con successo!</div>
+    <div class="end-card">
+        
+        <h1>Esperimento Completato!</h1>
+        
+        <p style="color: #ddd; font-size: 1.1rem;">
+            Grazie per la tua partecipazione.<br>
+            Puoi lasciare il dispositivo al ricercatore.
+        </p>
 
-    <br><br>
-    <a href="index.html">Nuova Sessione (Torna alla Home)</a>
+        <div class="divider"></div>
+
+        <p class="researcher-label">Area Riservata al Ricercatore</p>
+        <p style="font-size: 1rem; margin-bottom: 20px; color: #ccc;">
+            I dati sono pronti. Clicca per salvare il file JSON definitivo.
+        </p>
+
+        <button onclick="scaricaDatiCompleti()">📥 SCARICA DATI SESSIONE</button>
+        
+        <div id="msg" class="success-message">
+            ✅ File salvato con successo!
+        </div>
+
+        <br>
+        <a href="index.html" class="restart-link">🔄 Avvia una Nuova Sessione</a>
+    </div>
 
     <script>
         function scaricaDatiCompleti() {
@@ -29,7 +94,7 @@
             // 2. RECUPERO RISULTATI E ORDINAMENTO
             const anagrafica = JSON.parse(localStorage.getItem('dati_anagrafici') || '{}');
             
-            // A. Troviamo tutte le chiavi dei risultati
+            // A. Questionari (KSS, GVAS, VDS)
             let keys = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -37,40 +102,46 @@
                     keys.push(key);
                 }
             }
-
-            // B. Le ordiniamo numericamente in base allo step (1, 2, 3...)
-            // Questo garantisce l'ordine: Pre L1 -> Post L1 -> Pre L2 -> Post L2
+            // Ordina per step (1, 2, 3...)
             keys.sort((a, b) => {
                 const stepA = parseInt(a.match(/step_(\d+)_/)[1]);
                 const stepB = parseInt(b.match(/step_(\d+)_/)[1]);
                 return stepA - stepB;
             });
-
-            // C. Costruiamo l'oggetto ordinato
             const risultatiQuestionari = {};
             keys.forEach(key => {
                 risultatiQuestionari[key] = JSON.parse(localStorage.getItem(key));
             });
 
-            // 3. CREAZIONE DEL PACCHETTO DATI
+            // B. Tempi Automatici (dal Task Manager)
+            // Cerchiamo le chiavi salvate con il nome della luce
+            const performanceTimes = {};
+            // Recupera tempi Luce 1
+            if(localStorage.getItem(`PERFORMANCE_TIMES_${light1}`)) {
+                performanceTimes[light1] = JSON.parse(localStorage.getItem(`PERFORMANCE_TIMES_${light1}`));
+            }
+            // Recupera tempi Luce 2
+            if(localStorage.getItem(`PERFORMANCE_TIMES_${light2}`)) {
+                performanceTimes[light2] = JSON.parse(localStorage.getItem(`PERFORMANCE_TIMES_${light2}`));
+            }
+
+            // C. Intervista Finale
+            const intervista = JSON.parse(localStorage.getItem('INTERVISTA_FINALE') || '{}');
+
+            // 3. CREAZIONE DEL PACCHETTO DATI UNICO
             const sessioneCompleta = {
-                // BLOCCO 1: DATI DI CONTROLLO
                 CONTROL_DATA: {
                     Soggetto_ID: userId,
                     Data_Sessione: new Date().toLocaleString(),
                     Sequenza_Luci: `${light1} -> ${light2}`,
                     Sequenza_Esperimenti: `${exp1} -> ${exp2}`,
                     Luce_1: light1,
-                    Luce_2: light2,
-                    Esperimento_1: exp1,
-                    Esperimento_2: exp2
+                    Luce_2: light2
                 },
-                
-                // BLOCCO 2: ANAGRAFICA
                 ANAGRAFICA: anagrafica,
-                
-                // BLOCCO 3: RISULTATI (Ora Ordinati)
-                RISULTATI_QUESTIONARI: risultatiQuestionari
+                RISULTATI_QUESTIONARI: risultatiQuestionari,
+                TEMPI_AUTOMATICI: performanceTimes,
+                INTERVISTA: intervista
             };
 
             // 4. GENERAZIONE FILE JSON

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Esecuzione Compiti</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="flow.js"></script>
+    <style>
+        .task-item {
+            background: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #444;
+        }
+        .task-label { font-weight: bold; font-size: 1.1rem; }
+        .timer-display { font-family: monospace; color: #88C0D0; font-size: 1.2rem; margin-right: 15px; }
+        
+        .btn-timer {
+            padding: 10px 20px;
+            width: auto;
+            margin: 0;
+            font-size: 0.9rem;
+            min-width: 100px;
+        }
+        .btn-start { background-color: #4CAF50; }
+        .btn-stop { background-color: #e74c3c; display: none; }
+        .btn-done { background-color: #555; color: #aaa; cursor: default; display: none; }
+    </style>
+</head>
+<body>
+    <h1 id="phase-title">Compiti Sperimentali</h1>
+    <p style="text-align:center; color:#ccc; margin-bottom:20px">
+        Premi START per avviare il cronometro di ogni prova.<br>
+        Premi STOP appena la prova è terminata.
+    </p>
+
+    <div id="task-list"></div>
+
+    <button onclick="saveAndNext()" style="margin-top:30px">✅ TUTTI I COMPITI COMPLETATI</button>
+
+    <script>
+        // Lista dei task da cronometrare
+        const tasks = [
+            { id: 'lettura', label: '1. Lettura' },
+            { id: 'cancsimb', label: '2. Cancellazione Simboli' },
+            { id: 'double', label: '3. Double' },
+            { id: 'ops', label: '4. Operazioni' },
+            { id: 's1', label: '5. Stroop Parte 1' },
+            { id: 's2', label: '6. Stroop Parte 2' },
+            { id: 's3', label: '7. Stroop Parte 3' },
+            { id: 'canclet', label: '8. Cancellazione Lettere' }
+        ];
+
+        // Stato interno dei timer
+        let timings = {}; 
+        let intervals = {};
+
+        function init() {
+            const container = document.getElementById('task-list');
+            const phaseName = getCurrentLightName(); // Da flow.js
+            document.getElementById('phase-title').innerText = `Compiti: Fase ${phaseName}`;
+
+            tasks.forEach(task => {
+                container.innerHTML += `
+                <div class="task-item">
+                    <span class="task-label">${task.label}</span>
+                    <div style="display:flex; align-items:center">
+                        <span id="display_${task.id}" class="timer-display">00:00</span>
+                        <button id="btn_start_${task.id}" class="btn-timer btn-start" onclick="startTimer('${task.id}')">▶️ START</button>
+                        <button id="btn_stop_${task.id}" class="btn-timer btn-stop" onclick="stopTimer('${task.id}')">⏹️ STOP</button>
+                        <button id="btn_done_${task.id}" class="btn-timer btn-done">COMPLETATO</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function startTimer(id) {
+            // UI
+            document.getElementById(`btn_start_${id}`).style.display = 'none';
+            document.getElementById(`btn_stop_${id}`).style.display = 'block';
+            
+            // Logic
+            timings[id] = { start: Date.now(), duration: 0 };
+            
+            // Visual Timer Update
+            const display = document.getElementById(`display_${id}`);
+            intervals[id] = setInterval(() => {
+                const delta = Math.floor((Date.now() - timings[id].start) / 1000);
+                const m = Math.floor(delta / 60).toString().padStart(2, '0');
+                const s = (delta % 60).toString().padStart(2, '0');
+                display.innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function stopTimer(id) {
+            // Logic
+            clearInterval(intervals[id]);
+            const end = Date.now();
+            const durationSec = (end - timings[id].start) / 1000;
+            timings[id].duration = durationSec;
+
+            // UI
+            document.getElementById(`btn_stop_${id}`).style.display = 'none';
+            document.getElementById(`btn_done_${id}`).style.display = 'block';
+            
+            // Format final display
+            const m = Math.floor(durationSec / 60).toString().padStart(2, '0');
+            const s = (Math.floor(durationSec % 60)).toString().padStart(2, '0');
+            document.getElementById(`display_${id}`).innerText = `${m}:${s}`;
+            document.getElementById(`display_${id}`).style.color = "#4CAF50";
+        }
+
+        function saveAndNext() {
+            // Controllo se tutti i timer sono stati fermati
+            if (Object.keys(intervals).some(k => document.getElementById(`btn_stop_${k}`).style.display === 'block')) {
+                return alert("⚠️ Attenzione: ferma tutti i cronometri prima di proseguire!");
+            }
+
+            // Preparazione dati
+            const context = parseInt(localStorage.getItem('stepIndex')) <= 5 ? 'p1' : 'p2'; // Logica grezza ma efficace basata sulla sequenza
+            // Oppure meglio: controlliamo il 'context' attuale da flow.js se possibile, 
+            // ma qui salviamo in base alla fase corrente.
+            
+            // Salviamo un oggetto semplificato: { "lettura": 120.5, "stroop": 45.2 ... }
+            let savedData = {};
+            tasks.forEach(t => {
+                savedData[t.id] = timings[t.id] ? timings[t.id].duration : 0;
+            });
+
+            // Salviamo nel localStorage con una chiave univoca per la fase
+            // Usiamo una chiave speciale che poi index.html riconoscerà
+            const key = `PERFORMANCE_TIMES_${getCurrentLightName()}`; 
+            localStorage.setItem(key, JSON.stringify(savedData));
+
+            nextStep();
+        }
+
+        init();
+    </script>
+</body>
+</html>
