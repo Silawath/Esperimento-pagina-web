@@ -10,14 +10,14 @@
     <h1>Pausa</h1>
     <p>Rilassati. Il prossimo test inizierà tra:</p>
     
-    <div id="timer">10:00</div>
+    <div id="timer">6:00</div>
 
     <button id="btn-next" class="disabled-btn" onclick="nextStep()">VAI ALLA SECONDA FASE</button>
     
-    <button onclick="nextStep()" class="secondary-btn">(Salta Pausa - Debug)</button>
+    <!-- <button onclick="nextStep()" class="secondary-btn">(Salta Pausa - Debug)</button> -->
 
     <script>
-        let timeLeft = 10 * 60; 
+        let timeLeft = 6 * 60; 
         const timerEl = document.getElementById('timer');
         const btnEl = document.getElementById('btn-next');
 
