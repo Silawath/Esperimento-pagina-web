@@ -5,7 +5,7 @@
     <title>Fine</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Stile specifico per la pagina finale */
+
         .end-card {
             background-color: transparent;
             width: 100%;
@@ -59,11 +59,7 @@
     <div class="end-card">
         
         <h1>Esperimento Completato!</h1>
-        
-        <p style="color: #ddd; font-size: 1.1rem;">
-            Grazie per la tua partecipazione.<br>
-            Puoi lasciare il dispositivo al ricercatore.
-        </p>
+
 
         <div class="divider"></div>
 
@@ -72,29 +68,27 @@
             I dati sono pronti. Clicca per salvare il file JSON definitivo.
         </p>
 
-        <button onclick="scaricaDatiCompleti()">📥 SCARICA DATI SESSIONE</button>
+        <button onclick="scaricaDatiCompleti()">SCARICA DATI SESSIONE</button>
         
         <div id="msg" class="success-message">
-            ✅ File salvato con successo!
+            File salvato con successo!
         </div>
 
         <br>
-        <a href="index.html" class="restart-link">🔄 Avvia una Nuova Sessione</a>
+        <a href="index.html" class="restart-link">Avvia una Nuova Sessione</a>
     </div>
 
     <script>
         function scaricaDatiCompleti() {
-            // 1. RECUPERO DATI DI CONTROLLO
+
             const userId = localStorage.getItem('userId') || 'Sconosciuto';
             const light1 = localStorage.getItem('light1_name') || 'ND';
             const light2 = localStorage.getItem('light2_name') || 'ND';
             const exp1 = localStorage.getItem('phase1_name') || 'ND'; 
             const exp2 = localStorage.getItem('phase2_name') || 'ND'; 
             
-            // 2. RECUPERO RISULTATI E ORDINAMENTO
             const anagrafica = JSON.parse(localStorage.getItem('dati_anagrafici') || '{}');
             
-            // A. Questionari (KSS, GVAS, VDS)
             let keys = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -102,7 +96,6 @@
                     keys.push(key);
                 }
             }
-            // Ordina per step (1, 2, 3...)
             keys.sort((a, b) => {
                 const stepA = parseInt(a.match(/step_(\d+)_/)[1]);
                 const stepB = parseInt(b.match(/step_(\d+)_/)[1]);
@@ -113,22 +106,20 @@
                 risultatiQuestionari[key] = JSON.parse(localStorage.getItem(key));
             });
 
-            // B. Tempi Automatici (dal Task Manager)
-            // Cerchiamo le chiavi salvate con il nome della luce
             const performanceTimes = {};
-            // Recupera tempi Luce 1
+
             if(localStorage.getItem(`PERFORMANCE_TIMES_${light1}`)) {
                 performanceTimes[light1] = JSON.parse(localStorage.getItem(`PERFORMANCE_TIMES_${light1}`));
             }
-            // Recupera tempi Luce 2
+
             if(localStorage.getItem(`PERFORMANCE_TIMES_${light2}`)) {
                 performanceTimes[light2] = JSON.parse(localStorage.getItem(`PERFORMANCE_TIMES_${light2}`));
             }
 
-            // C. Intervista Finale
+
             const intervista = JSON.parse(localStorage.getItem('INTERVISTA_FINALE') || '{}');
 
-            // 3. CREAZIONE DEL PACCHETTO DATI UNICO
+
             const sessioneCompleta = {
                 CONTROL_DATA: {
                     Soggetto_ID: userId,
@@ -144,7 +135,6 @@
                 INTERVISTA: intervista
             };
 
-            // 4. GENERAZIONE FILE JSON
             const dataStr = JSON.stringify(sessioneCompleta, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);

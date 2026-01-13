@@ -39,7 +39,6 @@
 
         const cont = document.getElementById('symptoms-container');
         
-        // Generazione dinamica delle domande
         symptoms.forEach((s, i) => {
             cont.innerHTML += `
             <div class="question-box" style="display:flex; align-items:center; justify-content:space-between;">
@@ -54,11 +53,10 @@
                 </div>
             </div>`;
         });
-        // FUNZIONE DI SALVATAGGIO 
+
         function submitVDS() {
             let results = {};
-            
-            // Raccoglie tutte le risposte
+
             symptoms.forEach((s, i) => {
                 const name = `s${i}`;
                 const checkedEl = document.querySelector(`input[name="${name}"]:checked`);
@@ -67,20 +65,19 @@
                 }
             });
             
-            // Prepara il salvataggio
             const stepIndex = localStorage.getItem('stepIndex');
             const key = `risultato_step_${stepIndex}_VDS`;
             
             const record = {
                 valori: results,
-                fase: getCurrentLightName(), // Funzione di flow.js
+                fase: getCurrentLightName(), 
                 timestamp: new Date().toISOString()
             };
             
-            // Salva nel browser
+   
             localStorage.setItem(key, JSON.stringify(record));
             
-            // Va avanti
+
             nextStep();
         }
     </script>

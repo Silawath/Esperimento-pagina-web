@@ -69,7 +69,7 @@
 
     <div id="task-list"></div>
 
-    <button onclick="saveAndNext()" style="margin-top:40px; background-color:#5E81AC;">✅ TUTTI I COMPITI COMPLETATI</button>
+    <button onclick="saveAndNext()" style="margin-top:40px; background-color:#5E81AC;">TUTTI I COMPITI COMPLETATI</button>
 
     <script>
         const tasks = [
@@ -172,7 +172,7 @@
         function saveAndNext() {
             // Controllo timer attivi
             if (Object.keys(intervals).some(k => document.getElementById(`btn_stop_${k}`).style.display === 'block')) {
-                return alert("⚠️ Attenzione: ferma tutti i cronometri prima di proseguire!");
+                return alert("Attenzione: ferma tutti i cronometri prima di proseguire!");
             }
 
             // Preparazione dati
