@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="style.css">
     <script src="flow.js"></script>
     <style>
-        /* AUMENTATA SPAZIATURA E GRANDEZZA BOX */
+        
         .task-item {
             background: #333;
-            padding: 20px;          /* Aumentato da 15px */
-            margin-bottom: 25px;    /* Aumentato da 10px per distanziare */
+            padding: 20px;          
+            margin-bottom: 25px;    
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
@@ -24,7 +24,7 @@
         .timer-display { 
             font-family: monospace; 
             color: #88C0D0; 
-            font-size: 1.4rem; /* Leggermente più grande */
+            font-size: 1.4rem; 
             margin-right: 20px; 
             min-width: 70px;
             text-align: right;
@@ -33,7 +33,7 @@
         .btn-timer {
             padding: 12px 20px;
             width: auto;
-            margin: 0 5px; /* Spazio laterale tra i bottoni */
+            margin: 0 5px;
             font-size: 1rem;
             min-width: 100px;
             border-radius: 6px;
@@ -43,16 +43,16 @@
             font-weight: bold;
         }
 
-        .btn-start { background-color: #4CAF50; } /* Verde */
-        .btn-stop { background-color: #e74c3c; display: none; } /* Rosso */
-        .btn-done { background-color: #555; color: #aaa; cursor: default; display: none; } /* Grigio */
+        .btn-start { background-color: #4CAF50; } 
+        .btn-stop { background-color: #e74c3c; display: none; }
+        .btn-done { background-color: #555; color: #aaa; cursor: default; display: none; } 
         
-        /* STILE TASTO RESET */
+        
         .btn-reset { 
-            background-color: #EBCB8B; /* Giallo/Arancio */
+            background-color: #EBCB8B; 
             color: #2E3440;
-            display: none; /* Nascosto all'inizio */
-            min-width: 50px; /* Più piccolo */
+            display: none;
+            min-width: 50px;
             font-size: 1.2rem;
             padding: 10px;
         }
@@ -88,7 +88,7 @@
 
         function init() {
             const container = document.getElementById('task-list');
-            // Gestione sicura nel caso flow.js non abbia ancora settato il nome
+            
             const phaseName = (typeof getCurrentLightName === 'function') ? getCurrentLightName() : "Sconosciuta";
             document.getElementById('phase-title').innerText = `Compiti: Fase ${phaseName}`;
 
