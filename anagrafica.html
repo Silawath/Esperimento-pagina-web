@@ -6,14 +6,13 @@
     <link rel="stylesheet" href="style.css">
     <script src="flow.js"></script>
     <style>
-        /* Stile specifico per le checkbox a lista, simile ai radio button */
+        /* Stile specifico per le checkbox a lista */
         .checkbox-group {
             display: flex;
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
         }
-        /* Riutilizziamo lo stile .option dal CSS principale ma adattiamo per checkbox */
         .check-option {
             display: flex;
             align-items: center;
@@ -26,7 +25,6 @@
         }
         .check-option:hover { background-color: #555; border-color: white; }
         
-        /* Checkbox più grandi */
         input[type="checkbox"] {
             transform: scale(1.8);
             margin-right: 20px;
@@ -91,15 +89,16 @@
                 <label class="radio-option"><input type="radio" name="correzione" value="no"> No</label>
             </div>
             
-            <label>Caratteristiche particolari lenti/occhiali:</label>
-            <select id="caratteristiche_lenti" onchange="toggleAltroLenti(this)">
-                <option value="nessuna">Nessuna / Non porto lenti</option>
-                <option value="antiriflesso">Antiriflesso</option>
-                <option value="filtro_luce_blu">Filtro Luce Blu</option>
-                <option value="altro">Altro...</option>
-            </select>
+            <label>Caratteristiche particolari lenti/occhiali (selezione multipla):</label>
+            <div class="checkbox-group" id="group_lenti">
+                <label class="check-option"><input type="checkbox" name="lenti_feat" value="nessuna" onchange="checkLenti(this)"> Nessuna / Non porto lenti</label>
+                <label class="check-option"><input type="checkbox" name="lenti_feat" value="antiriflesso" onchange="checkLenti(this)"> Antiriflesso</label>
+                <label class="check-option"><input type="checkbox" name="lenti_feat" value="filtro_luce_blu" onchange="checkLenti(this)"> Filtro Luce Blu</label>
+                <label class="check-option"><input type="checkbox" name="lenti_feat" value="altro" onchange="checkLenti(this)"> Altro...</label>
+            </div>
+            
             <div id="div_altro_lenti" class="hidden-section">
-                <input type="text" id="altro_lenti_text" placeholder="Specifica caratteristiche...">
+                <input type="text" id="altro_lenti_text" placeholder="Specifica caratteristiche lenti...">
             </div>
         </div>
                 
@@ -171,59 +170,72 @@
     </form>
 
     <script>
-        // --- LOGICA VISTA (CHECKBOX) ---
+        // --- 1. LOGICA DISTURBI VISIVI ---
         function checkVista(el) {
             const checkboxes = document.querySelectorAll('input[name="disturbi_visivi"]');
             const divDettagli = document.getElementById('div_dettagli_vista');
             const radiosCorrezione = document.getElementsByName('correzione');
-
+            
+            // Logica esclusiva per "Nessuno"
             if (el.value === 'nessuno') {
                 if (el.checked) {
-                    // Se clicco Nessuno, deseleziono tutto il resto
                     checkboxes.forEach(cb => { if(cb !== el) cb.checked = false; });
                     divDettagli.style.display = 'none';
                 }
             } else {
                 if (el.checked) {
-                    // Se clicco una malattia, deseleziono "Nessuno"
-                    document.querySelector('input[value="nessuno"]').checked = false;
+                    document.querySelector('input[name="disturbi_visivi"][value="nessuno"]').checked = false;
                 }
             }
 
-            // Controllo se c'è almeno una selezione diversa da "Nessuno"
+            // Mostra dettagli se c'è almeno un disturbo selezionato
             const anySick = Array.from(checkboxes).some(cb => cb.checked && cb.value !== 'nessuno');
             
             if (anySick) {
                 divDettagli.style.display = 'block';
                 radiosCorrezione.forEach(r => r.required = true);
             } else {
-                // Se non c'è nulla selezionato o solo "nessuno"
                 divDettagli.style.display = 'none';
                 radiosCorrezione.forEach(r => { r.required = false; r.checked = false; });
-                document.getElementById('caratteristiche_lenti').value = "nessuna";
-                toggleAltroLenti(document.getElementById('caratteristiche_lenti'));
                 
-                // Forza la selezione di "Nessuno" se l'utente ha deselezionato tutto
-                if (!document.querySelector('input[value="nessuno"]').checked && !anySick) {
-                   // Opzionale: potremmo ri-checkare "nessuno", ma lasciamo libertà
+                // Resetta anche la sezione lenti
+                document.querySelectorAll('input[name="lenti_feat"]').forEach(cb => cb.checked = false);
+                document.querySelector('input[name="lenti_feat"][value="nessuna"]').checked = true;
+                checkLenti(document.querySelector('input[name="lenti_feat"][value="nessuna"]'));
+            }
+        }
+
+        // --- 2. NUOVA LOGICA CARATTERISTICHE LENTI (Multipla) ---
+        function checkLenti(el) {
+            const checkboxes = document.querySelectorAll('input[name="lenti_feat"]');
+            const divAltro = document.getElementById('div_altro_lenti');
+            const inputAltro = document.getElementById('altro_lenti_text');
+
+            // Logica esclusiva per "Nessuna"
+            if (el.value === 'nessuna') {
+                if (el.checked) {
+                    checkboxes.forEach(cb => { if(cb !== el) cb.checked = false; });
+                }
+            } else {
+                if (el.checked) {
+                    document.querySelector('input[name="lenti_feat"][value="nessuna"]').checked = false;
                 }
             }
-        }
 
-        function toggleAltroLenti(selectEl) {
-            const div = document.getElementById('div_altro_lenti');
-            const input = document.getElementById('altro_lenti_text');
-            if (selectEl.value === 'altro') {
-                div.style.display = 'block';
-                input.required = true;
+            // Gestione campo "Altro"
+            const altroChecked = document.querySelector('input[name="lenti_feat"][value="altro"]').checked;
+            
+            if (altroChecked) {
+                divAltro.style.display = 'block';
+                inputAltro.required = true;
             } else {
-                div.style.display = 'none';
-                input.required = false;
-                input.value = "";
+                divAltro.style.display = 'none';
+                inputAltro.required = false;
+                inputAltro.value = "";
             }
         }
 
-        // --- LOGICA PATOLOGIE (CHECKBOX) ---
+        // --- 3. LOGICA PATOLOGIE ---
         function checkPatologia(el) {
             const checkboxes = document.querySelectorAll('input[name="patologie"]');
             const divSpecifica = document.getElementById('div_specifica_patologia');
@@ -267,36 +279,43 @@
 
         // --- SALVATAGGIO ---
         function salvaAnagrafica() {
-            // Raccogli DISTURBI VISIVI (Array)
+            // 1. DISTURBI VISIVI
             const disturbiCheckboxes = document.querySelectorAll('input[name="disturbi_visivi"]:checked');
             let disturbiList = Array.from(disturbiCheckboxes).map(cb => cb.value);
-            if (disturbiList.length === 0) disturbiList = ["nessuno"]; // Default se vuoto
+            if (disturbiList.length === 0) disturbiList = ["nessuno"]; 
 
-            // Logica Correzione
+            // 2. CORREZIONE E LENTI
             let correzione = null;
-            let caratteristicheLenti = null;
+            let lentiList = []; 
+            let specificaLenti = null;
 
-            // Se la lista contiene qualcosa di diverso da "nessuno"
             if (!disturbiList.includes('nessuno')) {
                 const corrEl = document.querySelector('input[name="correzione"]:checked');
                 if (corrEl) correzione = corrEl.value;
 
-                let lentiVal = document.getElementById('caratteristiche_lenti').value;
-                if (lentiVal === 'altro') {
-                    caratteristicheLenti = document.getElementById('altro_lenti_text').value;
-                } else {
-                    caratteristicheLenti = lentiVal;
+                // Raccoglie le checkbox delle lenti
+                const lentiCheckboxes = document.querySelectorAll('input[name="lenti_feat"]:checked');
+                lentiList = Array.from(lentiCheckboxes).map(cb => cb.value);
+                
+                // Se la lista lenti è vuota, metti 'nessuna' per sicurezza
+                if(lentiList.length === 0) lentiList = ['nessuna'];
+
+                // Se c'è "altro", prendi il testo
+                if (lentiList.includes('altro')) {
+                    specificaLenti = document.getElementById('altro_lenti_text').value;
                 }
+            } else {
+                lentiList = ['nessuna'];
             }
 
-            // Daltonismo
+            // 3. DALTONISMO
             const daltonismoVal = document.querySelector('input[name="daltonismo"]:checked').value;
             let tipoDaltonismo = null;
             if (daltonismoVal === 'si') {
                 tipoDaltonismo = document.getElementById('tipo_daltonismo').value;
             }
 
-            // Raccogli PATOLOGIE (Array)
+            // 4. PATOLOGIE
             const patologieCheckboxes = document.querySelectorAll('input[name="patologie"]:checked');
             let patologieList = Array.from(patologieCheckboxes).map(cb => cb.value);
             if (patologieList.length === 0) patologieList = ["nessuna"];
@@ -306,24 +325,24 @@
                 specificaPatologia = document.getElementById('specifica_patologia_text').value;
             }
 
+            // CREAZIONE OGGETTO DATI
             const dati = {
                 nome: document.getElementById('nome').value,
                 eta: document.getElementById('eta').value,
                 occupazione: document.getElementById('occupazione').value,
                 dsa: document.getElementById('dsa').value,
                 
-                // Ora sono ARRAY (liste)
                 disturbo_visivo: disturbiList, 
                 
                 correzione: correzione,              
-                caratteristiche_lenti: caratteristicheLenti, 
+                caratteristiche_lenti: lentiList, 
+                specifica_lenti_altro: specificaLenti, 
                 
                 daltonico: daltonismoVal,
                 tipo_daltonismo: tipoDaltonismo,
                 note_visive: document.getElementById('note_visive').value,
 
-                // Ora sono ARRAY (liste)
-                categoria_patologia: patologieList,
+                categoria_patologia: patologieList, // Array
                 specifica_patologia: specificaPatologia,
 
                 affaticamento: document.querySelector('input[name="affaticamento"]:checked').value,
