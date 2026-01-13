@@ -30,6 +30,12 @@
         <label>6. Hai avuto altre difficoltà durante l'esperimento?</label>
         <textarea id="q6" required></textarea>
 
+        <label>7. Quanti caffè hai bevuto nel corso della giornata?</label>
+        <textarea id="q7" required></textarea>
+
+        <label>8. che tempo c'è oggi?</label>
+        <textarea id="q8" required></textarea>
+
         <button type="submit">TERMINA ESPERIMENTO</button>
     </form>
 
@@ -41,7 +47,9 @@
                 Q3_Diffs: document.getElementById('q3').value,
                 Q4_Light: document.getElementById('q4').value,
                 Q5_Eyes: document.getElementById('q5').value,
-                Q6_Other: document.getElementById('q6').value
+                Q6_Other: document.getElementById('q6').value,
+                Q7_Coffee: document.getElementById('q7').value,
+                Q8_Weather: document.getElementById('q8').value
             };
 
             localStorage.setItem('INTERVISTA_FINALE', JSON.stringify(data));
