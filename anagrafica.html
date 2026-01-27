@@ -58,6 +58,12 @@
             <option value="pensionato">Pensionato</option>
         </select>
 
+        <label>Lavori o hai un hobby dove l'utilizzo dei colori è predominante?</label>
+        <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="lavoro_colore" value="si" required> Sì</label>
+            <label class="radio-option"><input type="radio" name="lavoro_colore" value="no"> No</label>
+        </div>
+
         <div class="section-title">DSA (Disturbo Specifico dell'apprendimento)</div>
         <label>Hai una diagnosi di DSA?</label>
         
@@ -344,7 +350,8 @@
                 eta: document.getElementById('eta').value,
                 occupazione: document.getElementById('occupazione').value,
                 
-                // MODIFICATO QUI: Ora è una lista, non più un valore singolo
+                lavoro_colore: document.querySelector('input[name="lavoro_colore"]:checked') ? document.querySelector('input[name="lavoro_colore"]:checked').value : "",
+
                 dsa: dsaList, 
                 
                 disturbo_visivo: disturbiList, 
