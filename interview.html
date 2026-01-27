@@ -7,15 +7,28 @@
     <script src="flow.js"></script>
     <style>
         .scenario-box {
-            background: #333; padding: 15px; margin-bottom: 15px; 
+            background: #333; padding: 15px; margin-bottom: 20px; 
             border-radius: 8px; border: 1px solid #444;
-            display: flex; align-items: center; justify-content: space-between;
         }
-        .scenario-label { font-weight: bold; color: #EBCB8B; }
+        .scenario-header {
+            font-weight: bold; color: #88C0D0; font-size: 1.1rem;
+            margin-bottom: 10px; border-bottom: 1px solid #555; padding-bottom: 5px;
+        }
+        .questions-row {
+            display: flex; justify-content: space-between; gap: 15px;
+        }
+        .q-item {
+            flex: 1; display: flex; flex-direction: column;
+        }
+        .q-item label {
+            font-size: 0.9rem; color: #ccc; margin-bottom: 5px;
+        }
         .scenario-input { 
-            width: 80px; padding: 30px; text-align: center; 
+            width: 100%; padding: 10px; text-align: center; 
             font-size: 1.1rem; font-weight: bold;
+            background: #222; border: 1px solid #555; color: white; border-radius: 4px;
         }
+        .scenario-input:focus { border-color: #EBCB8B; outline: none; }
     </style>
 </head>
 <body>
@@ -51,31 +64,90 @@
         <textarea id="q8"></textarea>
 
         <div class="section-title" style="margin-top:40px;">Valutazione Scenari Luce</div>
-        <p style="margin-bottom:20px; color:#ccc;">Dai un voto di gradimento da 1 a 10 per ciascuno scenario.</p>
+        <p style="margin-bottom:20px; color:#ccc;">Per ogni scenario, rispondi alle due domande con un voto da <strong>1 a 100</strong>.</p>
 
         <div class="scenario-box">
-            <span class="scenario-label">Scenario 1</span>
-            <input type="number" id="scen_1" class="scenario-input" min="1" max="10" placeholder="1-10">
+            <div class="scenario-header">Scenario 1</div>
+            <div class="questions-row">
+                <div class="q-item">
+                    <label>Domanda A </label>
+                    <input type="number" id="scen_1_q1" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+                <div class="q-item">
+                    <label>Domanda B </label>
+                    <input type="number" id="scen_1_q2" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+            </div>
         </div>
+
         <div class="scenario-box">
-            <span class="scenario-label">Scenario 2</span>
-            <input type="number" id="scen_2" class="scenario-input" min="1" max="10" placeholder="1-10">
+            <div class="scenario-header">Scenario 2</div>
+            <div class="questions-row">
+                <div class="q-item">
+                    <label>Domanda A </label>
+                    <input type="number" id="scen_2_q1" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+                <div class="q-item">
+                    <label>Domanda B </label>
+                    <input type="number" id="scen_2_q2" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+            </div>
         </div>
+
         <div class="scenario-box">
-            <span class="scenario-label">Scenario 3</span>
-            <input type="number" id="scen_3" class="scenario-input" min="1" max="10" placeholder="1-10">
+            <div class="scenario-header">Scenario 3</div>
+            <div class="questions-row">
+                <div class="q-item">
+                    <label>Domanda A </label>
+                    <input type="number" id="scen_3_q1" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+                <div class="q-item">
+                    <label>Domanda B </label>
+                    <input type="number" id="scen_3_q2" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+            </div>
         </div>
+
         <div class="scenario-box">
-            <span class="scenario-label">Scenario 4</span>
-            <input type="number" id="scen_4" class="scenario-input" min="1" max="10" placeholder="1-10">
+            <div class="scenario-header">Scenario 4</div>
+            <div class="questions-row">
+                <div class="q-item">
+                    <label>Domanda A </label>
+                    <input type="number" id="scen_4_q1" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+                <div class="q-item">
+                    <label>Domanda B </label>
+                    <input type="number" id="scen_4_q2" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+            </div>
         </div>
+
         <div class="scenario-box">
-            <span class="scenario-label">Scenario 5</span>
-            <input type="number" id="scen_5" class="scenario-input" min="1" max="10" placeholder="1-10">
+            <div class="scenario-header">Scenario 5</div>
+            <div class="questions-row">
+                <div class="q-item">
+                    <label>Domanda A </label>
+                    <input type="number" id="scen_5_q1" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+                <div class="q-item">
+                    <label>Domanda B </label>
+                    <input type="number" id="scen_5_q2" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+            </div>
         </div>
+
         <div class="scenario-box">
-            <span class="scenario-label">Scenario 6</span>
-            <input type="number" id="scen_6" class="scenario-input" min="1" max="10" placeholder="1-10">
+            <div class="scenario-header">Scenario 6</div>
+            <div class="questions-row">
+                <div class="q-item">
+                    <label>Domanda A </label>
+                    <input type="number" id="scen_6_q1" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+                <div class="q-item">
+                    <label>Domanda B </label>
+                    <input type="number" id="scen_6_q2" class="scenario-input" min="1" max="100" placeholder="Voto">
+                </div>
+            </div>
         </div>
 
         <button type="button" onclick="saveInterview()" style="margin-top:30px; background-color:#5E81AC;">SALVA E PROSEGUI AL MUNSELL</button>
@@ -83,7 +155,6 @@
 
     <script>
         function saveInterview() {
-            // Recupero dati (usa || "" per evitare errori se vuoti)
             const data = {
                 Q1_Feeling: document.getElementById('q1').value || "",
                 Q2_Fatigue: document.getElementById('q2').value || "",
@@ -93,26 +164,28 @@
                 Q6_Other: document.getElementById('q6').value || "",
                 Q7_Coffee: document.getElementById('q7').value || "",
                 Q8_Weather: document.getElementById('q8').value || "",
-                // NUOVI DATI SCENARI
-                Scenario_1: document.getElementById('scen_1').value || "",
-                Scenario_2: document.getElementById('scen_2').value || "",
-                Scenario_3: document.getElementById('scen_3').value || "",
-                Scenario_4: document.getElementById('scen_4').value || "",
-                Scenario_5: document.getElementById('scen_5').value || "",
-                Scenario_6: document.getElementById('scen_6').value || ""
+                
+                // NUOVI DATI SCENARI (2 domande x 6 scenari)
+                Scen1_Q1: document.getElementById('scen_1_q1').value || "",
+                Scen1_Q2: document.getElementById('scen_1_q2').value || "",
+                
+                Scen2_Q1: document.getElementById('scen_2_q1').value || "",
+                Scen2_Q2: document.getElementById('scen_2_q2').value || "",
+                
+                Scen3_Q1: document.getElementById('scen_3_q1').value || "",
+                Scen3_Q2: document.getElementById('scen_3_q2').value || "",
+                
+                Scen4_Q1: document.getElementById('scen_4_q1').value || "",
+                Scen4_Q2: document.getElementById('scen_4_q2').value || "",
+                
+                Scen5_Q1: document.getElementById('scen_5_q1').value || "",
+                Scen5_Q2: document.getElementById('scen_5_q2').value || "",
+                
+                Scen6_Q1: document.getElementById('scen_6_q1').value || "",
+                Scen6_Q2: document.getElementById('scen_6_q2').value || ""
             };
 
-            // Validazione Opzionale (se vuoi bloccare se vuoto, scommenta qui sotto)
-            /*
-            if(data.Scenario_1 === "") {
-                alert("Per favore dai un voto almeno al primo scenario.");
-                return;
-            }
-            */
-
             localStorage.setItem('INTERVISTA_FINALE', JSON.stringify(data));
-            
-            // Forza il passaggio alla prossima pagina definita in flow.js
             nextStep();
         }
     </script>
